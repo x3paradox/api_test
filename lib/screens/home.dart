@@ -17,6 +17,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController searchController = TextEditingController();
   String search = '';
+
   List<UserAPIModel> userList = [];
   Future<void> getUserApi() async {
     print('api called');
@@ -25,11 +26,11 @@ class _HomeState extends State<Home> {
 
     final data = convert.jsonDecode(response.body);
     //log(data.toString());
+    print(data);
     for (var json in data['data']) {
       userList.add(UserAPIModel.fromJson(json));
+      print(userList);
     }
-
-    log(userList.length.toString());
   }
 
   @override
@@ -52,10 +53,10 @@ class _HomeState extends State<Home> {
                 labelText: 'Search',
                 hintText: 'Search Name',
               ),
-              onChanged: (String? value) {
+              onChanged: (String value) {
                 print(value);
                 setState(() {
-                  search = value.toString();
+                  search = value;
                 });
               },
             ),
@@ -86,18 +87,20 @@ class _HomeState extends State<Home> {
                               ],
                             ),
                           );
-                        } else if (postion
+                        } else if (userList[index]
+                            .name
+                            .toString()
                             .toLowerCase()
-                            .contains(searchController.text.toString())) {
+                            .contains(search.toLowerCase())) {
                           return Card(
                             child: Column(
                               children: [
                                 ReRaww(
-                                    titel: 'name' + postion,
+                                    titel: '',
                                     value: userList[index].name.toString()),
                                 FittedBox(
                                   child: ReRaww(
-                                      titel: 'email' + postion,
+                                      titel: "",
                                       value: userList[index].email.toString()),
                                 ),
                               ],
@@ -106,20 +109,20 @@ class _HomeState extends State<Home> {
                         } else {
                           return Container();
                         }
-                        return Card(
-                          child: Column(
-                            children: [
-                              ReRaww(
-                                  titel: 'name',
-                                  value: userList[index].name.toString()),
-                              FittedBox(
-                                child: ReRaww(
-                                    titel: 'email',
-                                    value: userList[index].email.toString()),
-                              ),
-                            ],
-                          ),
-                        );
+                        // return Card(
+                        //   child: Column(
+                        //     children: [
+                        //       ReRaww(
+                        //           titel: 'name',
+                        //           value: userList[index].name.toString()),
+                        //       FittedBox(
+                        //         child: ReRaww(
+                        //             titel: 'email',
+                        //             value: userList[index].email.toString()),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // );r
                       },
                     );
                   }
@@ -144,10 +147,6 @@ class ReRaww extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            titel,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
           Text(
             value,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
